@@ -34,12 +34,12 @@ jobs:
         uses: azure/container-apps-deploy-action@v1
         with:
           appSourcePath: ${{ github.workspace }} 
-          registryUrl: acrlinuxwebapp.azurecr.io
+          registryUrl: acrforcontainerapp.azurecr.io
           registryUsername: ${{ secrets.CONTAINERNGINX_REGISTRY_USERNAME }}
           registryPassword: ${{ secrets.CONTAINERNGINX_REGISTRY_PASSWORD }}
           containerAppName: containernginx
           resourceGroup: containerapp
-          imageToBuild: acrlinuxwebapp.azurecr.io/containernginx:${{ github.sha }}
+          imageToBuild: acrforcontainerapp.azurecr.io/containernginx:${{ github.sha }}
           dockerfilePath: Dockerfile
 
 
