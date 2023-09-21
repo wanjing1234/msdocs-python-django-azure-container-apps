@@ -1,0 +1,45 @@
+name: Trigger auto deployment for containerapptest123
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ main ]
+    paths:
+    - '//**'
+    - '.github/workflows/containerapptest123-AutoDeployTrigger-b382b5c4-18e6-4cff-9da2-2b19df28a915.yml'
+
+  # Allow manual trigger 
+  workflow_dispatch:      
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions: 
+      id-token: write #This is required for requesting the OIDC JWT Token
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.CONTAINERAPPTEST123_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.CONTAINERAPPTEST123_AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.CONTAINERAPPTEST123_AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          appSourcePath: ${{ github.workspace }} 
+          registryUrl: acrforcontainerapp.azurecr.io
+          registryUsername: ${{ secrets.CONTAINERAPPTEST123_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.CONTAINERAPPTEST123_REGISTRY_PASSWORD }}
+          containerAppName: containerapptest123
+          resourceGroup: containerapp
+          imageToBuild: acrforcontainerapp.azurecr.io/containerapptest123:${{ github.sha }}
+          dockerfilePath: Dockerfile
+
+
